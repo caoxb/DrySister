@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int page = 1;   //当前页数
     private PictureLoader loader;
     private SisterApi sisterApi;
+    private SisterTask sisterTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +45,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initData() {
         data = new ArrayList<>();
-        new SisterTask(page).execute();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_show:
-                if (curPos > 9) {
-                    curPos = 0;
+                if(data != null && !data.isEmpty()) {
+                    if (curPos > 9) {
+                        curPos = 0;
+                    }
+                    loader.load(showImg, data.get(curPos).getUrl());
+                    curPos++;
                 }
-                loader.load(showImg, data.get(curPos).getUrl());
-                curPos++;
                 break;
             case R.id.btn_refresh:
                 page++;
-                new SisterTask(page).execute();
+                sisterTask = new SisterTask();
+                sisterTask.execute();
                 curPos = 0;
                 break;
         }
@@ -67,10 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private class SisterTask extends AsyncTask<Void,Void,ArrayList<Sister>> {
 
-        private int page;
-
-        public SisterTask(int page) {
-            this.page = page;
+        public SisterTask() {
         }
 
         @Override
@@ -83,6 +83,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(sisters);
             data.clear();
             data.addAll(sisters);
+            page++;
         }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            sisterTask = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sisterTask.cancel(true);
     }
 }
