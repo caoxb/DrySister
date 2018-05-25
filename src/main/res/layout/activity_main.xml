@@ -12,7 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scaleType="fitCenter"/>
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:layout_margin="5dp"
+        android:layout_above="@+id/btn_show"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,5 +33,4 @@
             android:layout_height="wrap_content"
             android:text="妹子"/>
     </LinearLayout>
-
 </LinearLayout>

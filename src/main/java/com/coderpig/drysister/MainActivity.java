@@ -8,11 +8,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.coderpig.drysister.bean.Sister;
+import com.coderpig.drysister.imgloader.SisterLoader;
 import com.coderpig.drysister.service.SisterApi;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button showBtn;
     private Button refreshBtn;
     private ImageView showImg;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PictureLoader loader;
     private SisterApi sisterApi;
     private SisterTask sisterTask;
+    private SisterLoader mLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         sisterApi = new SisterApi();
         loader = new PictureLoader();
+        mLoader = SisterLoader.getInstance(MainActivity.this);
         initData();
         initUI();
     }
@@ -51,11 +54,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_show:
-                if(data != null && !data.isEmpty()) {
+                if (data != null && !data.isEmpty()) {
                     if (curPos > 9) {
                         curPos = 0;
                     }
-                    loader.load(showImg, data.get(curPos).getUrl());
+                    //loader.load(showImg, data.get(curPos).getUrl());
+                    mLoader.bindBitmap(data.get(curPos).getUrl(), showImg, 400, 400);
                     curPos++;
                 }
                 break;
@@ -68,14 +72,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class SisterTask extends AsyncTask<Void,Void,ArrayList<Sister>> {
+    private class SisterTask extends AsyncTask<Void, Void, ArrayList<Sister>> {
 
         public SisterTask() {
         }
 
         @Override
         protected ArrayList<Sister> doInBackground(Void... params) {
-            return sisterApi.fetchSister(10,page);
+            return sisterApi.fetchSister(10, page);
         }
 
         @Override
@@ -89,13 +93,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            sisterTask = null;
+            sisterTask.cancel(true);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sisterTask.cancel(true);
+        if (sisterTask != null) {
+            sisterTask.cancel(true);
+        }
     }
 }
