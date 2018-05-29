@@ -12,12 +12,13 @@ import com.coderpig.drysister.bean.Sister;
 import com.coderpig.drysister.db.SisterDBHelper;
 import com.coderpig.drysister.imgloader.SisterLoader;
 import com.coderpig.drysister.service.SisterApi;
+import com.coderpig.drysister.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button showBtn;
-    private Button refreshBtn;
+    private Button nextBtn;
+    private Button previousBtn;
     private ImageView showImg;
 
     private ArrayList<Sister> data;
@@ -42,12 +43,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUI() {
-        showBtn = findViewById(R.id.btn_show);
-        refreshBtn = findViewById(R.id.btn_refresh);
+        nextBtn = findViewById(R.id.btn_next);
+        previousBtn = findViewById(R.id.btn_previous);
         showImg = findViewById(R.id.img_show);
+        if (curPos == 0) {
+            previousBtn.setVisibility(View.INVISIBLE);
+        }
 
-        showBtn.setOnClickListener(this);
-        refreshBtn.setOnClickListener(this);
+        nextBtn.setOnClickListener(this);
+        previousBtn.setOnClickListener(this);
     }
 
     private void initData() {
@@ -57,21 +61,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_show:
-                if (data != null && !data.isEmpty()) {
-                    if (curPos > 9) {
-                        curPos = 0;
-                    }
-                    //loader.load(showImg, data.get(curPos).getUrl());
+            case R.id.btn_next:
+                previousBtn.setVisibility(View.VISIBLE);
+                if (curPos < data.size()) {
+                    ++curPos;
+                }
+                if (curPos > data.size() - 1) {
+                    sisterTask = new SisterTask();
+                    sisterTask.execute();
+                } else if (curPos < data.size()) {
                     mLoader.bindBitmap(data.get(curPos).getUrl(), showImg, 400, 400);
-                    curPos++;
                 }
                 break;
-            case R.id.btn_refresh:
-                page++;
-                sisterTask = new SisterTask();
-                sisterTask.execute();
-                curPos = 0;
+            case R.id.btn_previous:
+                --curPos;
+                if (curPos == 0) {
+                    previousBtn.setVisibility(View.INVISIBLE);
+                }
+                if (curPos == data.size() - 1) {
+                    sisterTask = new SisterTask();
+                    sisterTask.execute();
+                } else if (curPos < data.size()) {
+                    mLoader.bindBitmap(data.get(curPos).getUrl(), showImg, 400, 400);
+                }
                 break;
         }
     }
@@ -84,13 +96,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected ArrayList<Sister> doInBackground(Void... params) {
             ArrayList<Sister> result = new ArrayList<>();
-            Log.v("MainActivity", mDbHelper.getSistersCount() + "");
-            if (mDbHelper.getSistersCount() < page * 10) {
+            if (page < (curPos + 1) / 10 + 1) {
+                ++page;
+            }
+            //判断是否有网络
+            if (NetworkUtils.isAvailable(getApplicationContext())) {
                 result = sisterApi.fetchSister(10, page);
-                mDbHelper.insertSisters(data);
+                //查询数据库里有多少个妹子，避免重复插入
+                if (mDbHelper.getSistersCount() / 10 < page) {
+                    mDbHelper.insertSisters(result);
+                }
             } else {
                 result.clear();
-                result.addAll(mDbHelper.getSistersLimit(page, 10));
+                result.addAll(mDbHelper.getSistersLimit(page - 1, 10));
             }
             return result;
         }
@@ -98,17 +116,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(ArrayList<Sister> sisters) {
             super.onPostExecute(sisters);
-            data.clear();
             data.addAll(sisters);
-            mDbHelper.insertSisters(sisters);
-            page++;
+            if (data.size() > 0 && curPos + 1 < data.size()) {
+                mLoader.bindBitmap(data.get(curPos).getUrl(), showImg, 400, 400);
+            }
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            sisterTask.cancel(true);
+            if (sisterTask != null) {
+                sisterTask.cancel(true);
+            }
         }
+
     }
 
     @Override

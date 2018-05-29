@@ -13,6 +13,7 @@ import com.coderpig.drysister.R;
 import com.coderpig.drysister.imgloader.helper.DiskCacheHelper;
 import com.coderpig.drysister.imgloader.helper.MemoryCacheHelper;
 import com.coderpig.drysister.imgloader.helper.NetworkHelper;
+import com.coderpig.drysister.utils.NetworkUtils;
 import com.coderpig.drysister.utils.SizeUtils;
 
 import java.io.IOException;
@@ -104,8 +105,10 @@ public class SisterLoader {
                 return bitmap;
             }
             //磁盘里也找不到，加载网络
-            bitmap = mDiskHelper.saveImgByte(key, reqWidth, reqHeight, NetworkHelper.downloadUrlToStream(url));
-            Log.d(TAG, "加载网络上的图片，URL：" + url);
+            if (NetworkUtils.isAvailable(mContext)) {
+                bitmap = mDiskHelper.saveImgByte(key, reqWidth, reqHeight, NetworkHelper.downloadUrlToStream(url));
+                Log.d(TAG, "加载网络上的图片，URL：" + url);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

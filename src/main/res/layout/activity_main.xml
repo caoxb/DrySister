@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:scaleType="fitCenter"
         android:layout_margin="5dp"
-        android:layout_above="@+id/btn_show"/>
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,14 +23,14 @@
         android:layout_margin="5dp"
         android:orientation="horizontal">
         <Button
-            android:id="@+id/btn_refresh"
+            android:id="@+id/btn_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="换一批"/>
+            android:text="上一个"/>
         <Button
-            android:id="@+id/btn_show"
+            android:id="@+id/btn_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="妹子"/>
+            android:text="下一个"/>
     </LinearLayout>
 </LinearLayout>

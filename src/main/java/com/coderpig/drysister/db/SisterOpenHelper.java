@@ -19,7 +19,8 @@ public class SisterOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTableSql = "CREATE TABLE IF NOT EXISTS " + TableDefine.TABLE_FULI + " ("
-                + TableDefine.COLUMN_FULI_ID + " PRIMARY KEY, "
+                + TableDefine.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + TableDefine.COLUMN_FULI_ID + " TEXT, "
                 + TableDefine.COLUMN_FULI_CREATEAT + " TEXT, "
                 + TableDefine.COLUMN_FULI_DESC + " TEXT, "
                 + TableDefine.COLUMN_FULI_PUBLISHEDAT + " TEXT, "
