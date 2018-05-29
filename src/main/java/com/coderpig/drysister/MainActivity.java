@@ -3,11 +3,13 @@ package com.coderpig.drysister;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.coderpig.drysister.bean.Sister;
+import com.coderpig.drysister.db.SisterDBHelper;
 import com.coderpig.drysister.imgloader.SisterLoader;
 import com.coderpig.drysister.service.SisterApi;
 
@@ -21,18 +23,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Sister> data;
     private int curPos = 0; //当前显示的是哪一张
     private int page = 1;   //当前页数
-    private PictureLoader loader;
+    //private PictureLoader loader;
     private SisterApi sisterApi;
     private SisterTask sisterTask;
     private SisterLoader mLoader;
+    private SisterDBHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sisterApi = new SisterApi();
-        loader = new PictureLoader();
+        //loader = new PictureLoader();
         mLoader = SisterLoader.getInstance(MainActivity.this);
+        mDbHelper = SisterDBHelper.getInstance();
         initData();
         initUI();
     }
@@ -79,7 +83,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected ArrayList<Sister> doInBackground(Void... params) {
-            return sisterApi.fetchSister(10, page);
+            ArrayList<Sister> result = new ArrayList<>();
+            Log.v("MainActivity", mDbHelper.getSistersCount() + "");
+            if (mDbHelper.getSistersCount() < page * 10) {
+                result = sisterApi.fetchSister(10, page);
+                mDbHelper.insertSisters(data);
+            } else {
+                result.clear();
+                result.addAll(mDbHelper.getSistersLimit(page, 10));
+            }
+            return result;
         }
 
         @Override
@@ -87,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(sisters);
             data.clear();
             data.addAll(sisters);
+            mDbHelper.insertSisters(sisters);
             page++;
         }
 

@@ -8,22 +8,10 @@ public class Sister {
     private String source;
     private String type;
     private String url;
-    private boolean used;
+    private int used;
     private String who;
 
     public Sister() {
-    }
-
-    public Sister(String _id, String createAt, String desc, String publishedAt, String source, String type, String url, boolean used, String who) {
-        this._id = _id;
-        this.createAt = createAt;
-        this.desc = desc;
-        this.publishedAt = publishedAt;
-        this.source = source;
-        this.type = type;
-        this.url = url;
-        this.used = used;
-        this.who = who;
     }
 
     public void set_id(String _id) {
@@ -54,7 +42,7 @@ public class Sister {
         this.url = url;
     }
 
-    public void setUsed(boolean used) {
+    public void setUsed(int used) {
         this.used = used;
     }
 
@@ -90,7 +78,7 @@ public class Sister {
         return url;
     }
 
-    public boolean isUsed() {
+    public int getUsed() {
         return used;
     }
 
