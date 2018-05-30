@@ -13,12 +13,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * 描述：妹子业务操作api
+ */
 public class SisterApi {
     private static final String TAG = "Network";
-    private static final String BASE_URL = "http://gank.io/api/data/福利/";
+    private static final String BASE_URL = "http://gank.io/api/data/%e7%a6%8f%e5%88%a9/";
 
     /**
-     * 查询妹子信息
+     * 获取总共count页中第page页的妹子数据集
      */
     public ArrayList<Sister> fetchSister(int count, int page) {
         String fetchUrl = BASE_URL + count + "/" + page;
@@ -46,7 +49,7 @@ public class SisterApi {
 
 
     /**
-     * 解析返回Json数据的方法
+     * 解析Json数据后返回妹子数据集
      */
     public ArrayList<Sister> parseSister(String content) throws Exception {
         ArrayList<Sister> sisters = new ArrayList<>();

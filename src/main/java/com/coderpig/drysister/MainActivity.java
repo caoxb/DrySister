@@ -46,9 +46,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nextBtn = findViewById(R.id.btn_next);
         previousBtn = findViewById(R.id.btn_previous);
         showImg = findViewById(R.id.img_show);
-        if (curPos == 0) {
-            previousBtn.setVisibility(View.INVISIBLE);
-        }
 
         nextBtn.setOnClickListener(this);
         previousBtn.setOnClickListener(this);
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_previous:
                 --curPos;
                 if (curPos == 0) {
-                    previousBtn.setVisibility(View.INVISIBLE);
+                    previousBtn.setVisibility(View.GONE);
                 }
                 if (curPos == data.size() - 1) {
                     sisterTask = new SisterTask();

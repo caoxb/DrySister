@@ -15,6 +15,7 @@
         android:layout_gravity="center"
         android:scaleType="fitCenter"
         android:layout_margin="5dp"
+        android:adjustViewBounds="true"
         />
 
     <LinearLayout
@@ -26,11 +27,12 @@
             android:id="@+id/btn_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="上一个"/>
+            android:text="@string/previous_one"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/btn_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="下一个"/>
+            android:text="@string/next_one"/>
     </LinearLayout>
 </LinearLayout>
