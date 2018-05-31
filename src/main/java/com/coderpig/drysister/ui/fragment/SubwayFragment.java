@@ -13,6 +13,11 @@ public class SubwayFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static SubwayFragment newInstance() {
+        SubwayFragment fragment = new SubwayFragment();
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

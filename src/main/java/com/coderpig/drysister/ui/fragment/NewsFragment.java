@@ -19,6 +19,10 @@ public class NewsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static NewsFragment newInstance() {
+        NewsFragment fragment = new NewsFragment();
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

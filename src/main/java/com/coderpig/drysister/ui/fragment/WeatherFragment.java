@@ -19,6 +19,10 @@ public class WeatherFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static WeatherFragment newInstance() {
+        WeatherFragment fragment = new WeatherFragment();
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
